@@ -1,0 +1,204 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Admin Panel</title>
+    <link
+      href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css"
+      rel="stylesheet"
+    />
+  </head>
+  <body class="bg-gray-100">
+    <div class="container mx-auto p-6">
+      <h1 class="text-3xl font-bold text-blue-700 mb-6">Admin Panel</h1>
+
+      <!-- Candidate List -->
+      <section class="mb-8">
+        <h2 class="text-2xl font-semibold mb-4">Candidate List</h2>
+        <ul class="bg-white p-4 rounded shadow">
+          <% candidates.forEach(candidate => { %>
+          <li><strong>Candidate ID</strong> - <%= candidate._id%></li>
+          <li class="border-b py-2">
+            <strong><%= candidate.name %></strong> - <%= candidate.party %>
+          </li>
+          <% }); %>
+        </ul>
+      </section>
+
+      <!-- Nominate a New Candidate -->
+      <section class="mb-8">
+        <h2 class="text-2xl font-semibold mb-4">Nominate a New Candidate</h2>
+        <form
+          action="/api/admin/nomination"
+          method="POST"
+          class="bg-white p-4 rounded shadow"
+        >
+          <label class="block mb-2">Name:</label>
+          <input
+            type="text"
+            name="name"
+            class="w-full p-2 border mb-4 rounded"
+            required
+          />
+
+          <label class="block mb-2">Party:</label>
+          <input
+            type="text"
+            name="party"
+            class="w-full p-2 border mb-4 rounded"
+            required
+          />
+          <div class="mb-4">
+            <label for="age" class="block text-gray-700">Age</label>
+            <input
+              type="number"
+              id="age"
+              name="age"
+              required
+              class="w-full px-4 py-2 border rounded"
+            />
+          </div>
+
+          <button
+            type="submit"
+            class="bg-blue-600 text-white px-4 py-2 rounded"
+          >
+            Nominate
+          </button>
+        </form>
+      </section>
+
+      <!-- Update a Candidate -->
+      <section class="mb-8">
+        <h2 class="text-2xl font-semibold mb-4">Update a Candidate</h2>
+        <form
+          id="updateCandidateForm"
+          method="POST"
+          class="bg-white p-4 rounded shadow"
+        >
+          <label class="block mb-2">Candidate ID:</label>
+          <input
+            type="text"
+            id="candidateID"
+            class="w-full p-2 border mb-4 rounded"
+            required
+          />
+
+          <label class="block mb-2">New Name:</label>
+          <input
+            type="text"
+            name="name"
+            class="w-full p-2 border mb-4 rounded"
+          />
+
+          <label class="block mb-2">New Party:</label>
+          <input
+            type="text"
+            name="party"
+            class="w-full p-2 border mb-4 rounded"
+          />
+
+          <button
+            type="submit"
+            class="bg-green-600 text-white px-4 py-2 rounded"
+          >
+            Update
+          </button>
+        </form>
+      </section>
+
+      <!-- Withdraw a Candidate -->
+      <section class="mb-8">
+        <h2 class="text-2xl font-semibold mb-4">Withdraw a Candidate</h2>
+        <form
+          id="withdrawCandidateForm"
+          method="POST"
+          class="bg-white p-4 rounded shadow"
+        >
+          <label class="block mb-2">Candidate ID:</label>
+          <input
+            type="text"
+            id="withdrawCandidateID"
+            class="w-full p-2 border mb-4 rounded"
+            required
+          />
+
+          <button type="submit" class="bg-red-600 text-white px-4 py-2 rounded">
+            Withdraw
+          </button>
+        </form>
+      </section>
+
+      <!-- Count Votes -->
+      <section class="mb-8">
+        <h2 class="text-2xl font-semibold mb-4">Vote Count</h2>
+        <button
+          onclick="fetchVoteCount()"
+          class="bg-blue-600 text-white px-4 py-2 rounded"
+        >
+          Count Votes
+        </button>
+
+        <div id="vote-count" class="bg-white p-4 rounded shadow mt-4">
+          <!-- Vote count results will be displayed here -->
+        </div>
+      </section>
+    </div>
+
+    <script>
+      //event for updating the candidate
+      document
+        .getElementById("updateCandidateForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault(); // Prevent the default form submission
+
+          // Get the candidate ID from the input field
+          const candidateID = document.getElementById("candidateID").value;
+
+          // Update the form action to include the candidate ID
+          this.action = `/api/admin/update/${candidateID}`;
+
+          // Submit the form
+          this.submit();
+        });
+
+      // event for withdrawing a candidate request
+      document
+        .getElementById("withdrawCandidateForm")
+        .addEventListener("submit", function (event) {
+          event.preventDefault(); // Prevent the default form submission
+
+          // Get the candidate ID from the input field
+          const candidateID = document.getElementById(
+            "withdrawCandidateID"
+          ).value;
+
+          // Update the form action to include the candidate ID
+          this.action = `/api/admin/withdraw/${candidateID}`;
+
+          // Submit the form
+          this.submit();
+        });
+
+      // Fetch and display vote count data
+      function fetchVoteCount() {
+        fetch("/api/admin/count/vote")
+          .then((response) => response.json())
+          .then((data) => {
+            const voteCountDiv = document.getElementById("vote-count");
+            voteCountDiv.innerHTML = data
+              .map(
+                (candidate) => `
+            <p><strong>Party:</strong> ${candidate.party} - <strong>Votes:</strong> ${candidate.count}</p>
+          `
+              )
+              .join("");
+          })
+          .catch((error) => {
+            console.error("Error fetching vote count:", error);
+          });
+      }
+    </script>
+  </body>
+</html>
