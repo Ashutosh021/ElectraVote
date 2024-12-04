@@ -1,6 +1,6 @@
-# Voting Application
+# ElectroVote
 
-This is a backend application for a voting system where users can vote for candidates. It provides functionalities for user authentication, candidate management, and voting.
+ElectroVote is a backend application for a voting system where users can vote for candidates. It provides functionalities for user authentication, candidate management, and voting.
 
 ## Features
 
@@ -12,10 +12,12 @@ This is a backend application for a voting system where users can vote for candi
 
 ## Technologies Used
 
+- Ejs
 - Node.js
 - Express.js
 - MongoDB
 - JSON Web Tokens (JWT) for authentication
+- tailwind CSS
 
 ## Installation
 
@@ -60,7 +62,5 @@ This is a backend application for a voting system where users can vote for candi
 ## User Profile
 
 ### Get Profile
-- `GET /users/profile`: Get user profile information
+- `GET /getuser/:userId`: Get user profile information
 
-### Change Password
-- `PUT /users/profile/password`: Change user password
