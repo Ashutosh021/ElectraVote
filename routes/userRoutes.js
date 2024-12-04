@@ -13,7 +13,7 @@ router.post('/signup', SignUp)
 // Login Route
 router.post('/login', Login)
        .get('/login',(req,res)=>{
-        res.render('LoginPage',{error:null})
+        res.render('LogInPage',{error:null})
        })
 
 router.post('/logout',Logout)
